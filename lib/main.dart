@@ -122,7 +122,12 @@ class _MyHomePageState extends State<MyHomePage> {
                               width: 70,
                               // ignore: prefer_const_constructors
                               child: Text(
-                                "category",
+                                pokemons[index]
+                                    .pokemonType!
+                                    .types[0]
+                                    .sub!
+                                    .name
+                                    .toString(),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -176,6 +181,14 @@ Future<List<Pokemon>> getPokemons(int offset) async {
       pokemons[i + offset].id = query.toString(); //for onClick queries
       pokemons[i + offset].img =
           "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$query.png";
+      var typeResponse = http
+          .get(Uri.parse("https://pokeapi.co/api/v2/pokemon/$query"))
+          .then((value) {
+        print(query.toString() + " <<");
+        pokemons[i + offset].pokemonType =
+            ArrType.fromJson(jsonDecode(value.body));
+        print(pokemons[i + offset].pokemonType!.types[0].sub!.name);
+      });
     }
   });
   return test.results;
