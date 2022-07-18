@@ -2,8 +2,9 @@ class Pokemon {
   String? name;
   String? url;
   String img = "";
+  String id = "";
 
-  Pokemon({this.name, this.url, required this.img});
+  Pokemon({this.name, this.url, required this.img, required this.id});
 
   Pokemon.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -39,3 +40,26 @@ class Root {
     return data;
   }
 }
+
+/* TO TEST = TYPE PARSE */
+// class ArrType {
+//   List<Type> types = [];
+// }
+
+// class Type {
+//   String slot = "";
+//   Sub_type sub = Sub_type();
+
+//   Type({required this.slot, required this.sub});
+
+//   Type.fromJson(Map<String, dynamic> json) {
+//     slot = json['slot'];
+//     sub = json['type'];
+//   }
+// }
+
+// class Sub_type {
+//   String name = "";
+//   String url = "";
+//   Sub_type({required this.name, required this.url});
+// }

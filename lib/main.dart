@@ -55,21 +55,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  int offsetTracker = 0;
+  ScrollController _scrollController = new ScrollController();
 
   @override
   initState() {
-    getPokemons().then((value) {
+    getPokemons(offsetTracker).then((value) {
       setState(() {});
     });
     super.initState();
@@ -84,76 +75,108 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      // appBar: AppBar(
-      //   // Here we take the value from the MyHomePage object that was created by
-      //   // the App.build method, and use it to set our appbar title.
-      //   title: Text(widget.title),
-      // ),
-      body: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 150,
-            childAspectRatio: 1,
-            crossAxisSpacing: 1,
-            mainAxisSpacing: 1),
-        itemCount: pokemons.length,
-        itemBuilder: (context, index) {
-          return Center(
-            child: GestureDetector(
-                child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      color: Color.fromARGB(255, 27, 29, 27), spreadRadius: 3),
-                ],
-              ),
-              child: Column(children: [
-                Text(
-                    style: TextStyle(color: Colors.black),
-                    textAlign: TextAlign.left,
-                    pokemons[index].name.toString() + "\n"),
-                Container(
-                  width: 150,
-                  height: 50,
-                  alignment: Alignment.centerRight,
-                  child: Image.network(pokemons[index].img),
-                )
-              ]),
-            )),
-          );
-        },
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     getPokemons();
-      //   },
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+        // appBar: AppBar(
+        //   // Here we take the value from the MyHomePage object that was created by
+        //   // the App.build method, and use it to set our appbar title.
+        //   title: Text(widget.title),
+        // ),
+        body: NotificationListener(
+            child: GridView.builder(
+              controller: _scrollController,
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 180,
+                  childAspectRatio: 1,
+                  crossAxisSpacing: 1,
+                  mainAxisSpacing: 1),
+              itemCount: pokemons.length,
+              itemBuilder: (context, index) {
+                String first = pokemons[index].name.toString();
+                String name = first[0].toUpperCase() + first.substring(1);
+                return Center(
+                  child: GestureDetector(
+                      child: Container(
+                    width: 165,
+                    height: 165,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child: Column(children: [
+                      SizedBox(height: 8),
+                      Text(
+                          style: TextStyle(color: Colors.black),
+                          textAlign: TextAlign.left,
+                          name + "\n"),
+                      Row(
+                        children: [
+                          Column(children: [
+                            Container(
+                              width: 70,
+                              // ignore: prefer_const_constructors
+                              child: Text(
+                                "category",
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            SizedBox(height: 3),
+                            Container(
+                              width: 70,
+                              // ignore: prefer_const_constructors
+                              child: Text(
+                                "category2",
+                                textAlign: TextAlign.center,
+                              ),
+                            )
+                          ]),
+                          Container(
+                            width: 95,
+                            height: 100,
+                            alignment: Alignment.centerRight,
+                            child: Image.network(pokemons[index].img),
+                          )
+                        ],
+                      ),
+                    ]),
+                  )),
+                );
+              },
+            ),
+            onNotification: (end) {
+              if (end is ScrollEndNotification) {
+                getPokemons(offsetTracker + 20).then((value) {
+                  offsetTracker = offsetTracker + 20;
+                  setState(() {});
+                });
+              }
+              return true;
+            }));
   }
 }
 
-Future<List<Pokemon>> getPokemons() async {
+Future<List<Pokemon>> getPokemons(int offset) async {
   List<Pokemon> fullList = [];
   Root test = new Root(results: fullList);
   final response = await http
-      .get(Uri.parse('https://pokeapi.co/api/v2/pokemon/'))
+      .get(Uri.parse(
+          'https://pokeapi.co/api/v2/pokemon/?limit=20&offset=$offset'))
       .then((value) async {
-    print(value.body);
+    // print(value.body);
     test = Root.fromJson(jsonDecode(value.body));
-    pokemons = test.results;
-
-    for (var i = 0; i < pokemons.length; i++) {
-      int a = i + 1;
-      pokemons[i].img =
-          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$a.png";
+    for (var i = 0; i < test.results.length; i++) {
+      int query = i + offset + 1;
+      pokemons.add(test.results[i]);
+      pokemons[i + offset].id = query.toString(); //for onClick queries
+      pokemons[i + offset].img =
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$query.png";
     }
-
-    // print("ASD = >" + test.results.length.toString());
   });
   return test.results;
 }
