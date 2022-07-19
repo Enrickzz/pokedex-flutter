@@ -12,6 +12,7 @@ void main() {
 }
 
 List<Pokemon> pokemons = [];
+Root? holder;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -41,6 +42,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   initState() {
+    http
+        .get(Uri.parse("https://pokeapi.co/api/v2/pokemon/?limit=905"))
+        .then((json) {
+      holder = Root.fromJson(jsonDecode(json.body));
+    });
     _scrollController.addListener(() {
       if (_scrollController.position.atEdge) {
         bool isTop = _scrollController.position.pixels == 0;
@@ -79,33 +85,27 @@ class _MyHomePageState extends State<MyHomePage> {
                   onChanged: (query) async {
                     pokemons.clear();
                     if (query != "") {
-                      await http
-                          .get(Uri.parse(
-                              "https://pokeapi.co/api/v2/pokemon/?limit=905"))
-                          .then((json) {
-                        Root holder = Root.fromJson(jsonDecode(json.body));
-                        for (var i = 0; i < holder.results.length; i++) {
-                          if (holder.results[i].name
-                              .toString()
-                              .startsWith(query.toString(), 0)) {
-                            Pokemon thisPokemon = holder.results[i];
-                            String apiID =
-                                thisPokemon.url.toString().split("/")[6];
-                            thisPokemon.id = apiID; //for onClick queries
-                            thisPokemon.img =
-                                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$apiID.png";
-                            http
-                                .get(Uri.parse(
-                                    "https://pokeapi.co/api/v2/pokemon/$apiID"))
-                                .then((value) {
-                              thisPokemon.pokemonType =
-                                  ArrType.fromJson(jsonDecode(value.body));
-                              pokemons.add(thisPokemon);
-                              setState(() {});
-                            });
-                          }
+                      for (var i = 0; i < holder!.results.length; i++) {
+                        if (holder!.results[i].name
+                            .toString()
+                            .startsWith(query.toString(), 0)) {
+                          Pokemon thisPokemon = holder!.results[i];
+                          String apiID =
+                              thisPokemon.url.toString().split("/")[6];
+                          thisPokemon.id = apiID; //for onClick queries
+                          thisPokemon.img =
+                              "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$apiID.png";
+                          http
+                              .get(Uri.parse(
+                                  "https://pokeapi.co/api/v2/pokemon/$apiID"))
+                              .then((value) {
+                            thisPokemon.pokemonType =
+                                ArrType.fromJson(jsonDecode(value.body));
+                            pokemons.add(thisPokemon);
+                            setState(() {});
+                          });
                         }
-                      });
+                      }
                     } else {
                       offsetTracker = 0;
                       pokemons.clear();
@@ -255,16 +255,15 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 Future<List<Pokemon>> getPokemons(int offset) async {
-  if (offset == 0) {
-    pokemons.clear();
-  }
   List<Pokemon> fullList = [];
   Root test = Root(results: fullList);
   await http
       .get(Uri.parse(
           'https://pokeapi.co/api/v2/pokemon/?limit=20&offset=$offset'))
       .then((value) async {
-    // print(value.body);
+    if (offset == 0) {
+      pokemons.clear();
+    }
     test = Root.fromJson(jsonDecode(value.body));
     for (var i = 0; i < test.results.length; i++) {
       int query = i + offset + 1;
