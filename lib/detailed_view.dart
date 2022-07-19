@@ -1,10 +1,4 @@
-// ignore_for_file: prefer_is_empty
-
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:http/http.dart' as http;
 import 'models/pokedex.dart';
 
 class PokemonDetailed extends StatefulWidget {
@@ -47,13 +41,9 @@ class _PokemonDetailed extends State<PokemonDetailed> {
             height: 200,
             width: 200,
             child: Column(children: [
-              Container(
-                width: 150,
-                height: 150,
-                child: Image.network(
-                  widget.thisPokemon.img,
-                  fit: BoxFit.fill,
-                ),
+              Image.network(
+                widget.thisPokemon.img,
+                fit: BoxFit.fill,
               ),
               Align(
                   alignment: Alignment.bottomCenter,
