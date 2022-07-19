@@ -1,7 +1,10 @@
+// ignore_for_file: prefer_is_empty
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pokedex/detailedView.dart';
 import 'models/pokedex.dart';
 
 void main() {
@@ -57,7 +60,6 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   int offsetTracker = 0;
   ScrollController _scrollController = new ScrollController();
-
   @override
   initState() {
     getPokemons(offsetTracker).then((value) {
@@ -90,67 +92,98 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisSpacing: 1),
               itemCount: pokemons.length,
               itemBuilder: (context, index) {
+                //Data clean up/ null checking operations
                 String first = pokemons[index].name.toString();
                 String name = first[0].toUpperCase() + first.substring(1);
+                bool bool2ndType = true;
+                String? string2ndType;
+                // ignore: unnecessary_null_comparison
+                String? firstT = pokemons[index]
+                        .pokemonType
+                        ?.types
+                        .first
+                        .sub!
+                        .name
+                        .toString(),
+                    lastT = pokemons[index]
+                        .pokemonType
+                        ?.types
+                        .last
+                        .sub!
+                        .name
+                        .toString();
+                if (lastT != firstT) {
+                  string2ndType = pokemons[index]
+                      .pokemonType!
+                      .types[1]
+                      .sub!
+                      .name
+                      .toString();
+                }
+                Color boxColor = pokemonColor(firstT);
                 return Center(
                   child: GestureDetector(
-                      child: Container(
-                    width: 165,
-                    height: 165,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 5,
-                          blurRadius: 7,
-                          offset: Offset(0, 3), // changes position of shadow
-                        ),
-                      ],
-                    ),
-                    child: Column(children: [
-                      SizedBox(height: 8),
-                      Text(
-                          style: TextStyle(color: Colors.black),
-                          textAlign: TextAlign.left,
-                          name + "\n"),
-                      Row(
-                        children: [
-                          Column(children: [
-                            Container(
-                              width: 70,
-                              // ignore: prefer_const_constructors
-                              child: Text(
-                                pokemons[index]
-                                    .pokemonType!
-                                    .types[0]
-                                    .sub!
-                                    .name
-                                    .toString(),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            SizedBox(height: 3),
-                            Container(
-                              width: 70,
-                              // ignore: prefer_const_constructors
-                              child: Text(
-                                "category2",
-                                textAlign: TextAlign.center,
-                              ),
-                            )
-                          ]),
-                          Container(
-                            width: 95,
-                            height: 100,
-                            alignment: Alignment.centerRight,
-                            child: Image.network(pokemons[index].img),
-                          )
+                    child: Container(
+                      width: 165,
+                      height: 165,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: boxColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
                         ],
                       ),
-                    ]),
-                  )),
+                      child: Column(children: [
+                        SizedBox(height: 8),
+                        Text(
+                            style: TextStyle(color: Colors.black),
+                            textAlign: TextAlign.left,
+                            name + "\n"),
+                        Row(
+                          children: [
+                            Column(children: [
+                              Container(
+                                width: 70,
+                                // ignore: prefer_const_constructors
+                                child: nullCheck(pokemons[index]
+                                    .pokemonType
+                                    ?.types[0]
+                                    .sub!
+                                    .name
+                                    .toString()),
+                              ),
+                              SizedBox(height: 3),
+                              Visibility(
+                                  visible: bool2ndType,
+                                  child: Container(
+                                    width: 70,
+                                    // ignore: prefer_const_constructors
+                                    child: nullCheck(string2ndType),
+                                  ))
+                            ]),
+                            Container(
+                              width: 95,
+                              height: 100,
+                              alignment: Alignment.centerRight,
+                              child: Image.network(pokemons[index].img),
+                            )
+                          ],
+                        ),
+                      ]),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PokemonDetailed(
+                                  thisPokemon: pokemons[index])));
+                    },
+                  ),
                 );
               },
             ),
@@ -163,6 +196,43 @@ class _MyHomePageState extends State<MyHomePage> {
               }
               return true;
             }));
+  }
+}
+
+Color pokemonColor(String? firstT) {
+  switch (firstT) {
+    case "grass":
+      return Color.fromARGB(255, 63, 194, 85);
+    case "fire":
+      return Color.fromARGB(255, 228, 94, 41);
+    case "water":
+      return Color.fromARGB(255, 66, 132, 207);
+    case "bug":
+      return Color.fromARGB(255, 53, 88, 59);
+    case "normal":
+      return Color.fromARGB(255, 255, 255, 255);
+    case "electric":
+      return Color.fromARGB(255, 191, 218, 74);
+    case "poison":
+      return Color.fromARGB(255, 168, 63, 194);
+    case "ground":
+      return Color.fromARGB(255, 136, 100, 52);
+    case "fairy":
+      return Color.fromARGB(255, 208, 236, 142);
+    case "fighting":
+      return Color.fromARGB(255, 219, 151, 50);
+    case "psychic":
+      return Color.fromARGB(255, 196, 71, 144);
+    case "ghost":
+      return Color.fromARGB(255, 95, 110, 98);
+    case "rock":
+      return Color.fromARGB(255, 168, 170, 169);
+    case "ice":
+      return Color.fromARGB(255, 132, 225, 228);
+    case "dragon":
+      return Color.fromARGB(255, 235, 130, 44);
+    default:
+      return Colors.white;
   }
 }
 
@@ -184,12 +254,21 @@ Future<List<Pokemon>> getPokemons(int offset) async {
       var typeResponse = http
           .get(Uri.parse("https://pokeapi.co/api/v2/pokemon/$query"))
           .then((value) {
-        print(query.toString() + " <<");
         pokemons[i + offset].pokemonType =
             ArrType.fromJson(jsonDecode(value.body));
-        print(pokemons[i + offset].pokemonType!.types[0].sub!.name);
       });
     }
   });
   return test.results;
+}
+
+Widget nullCheck(String? text) {
+  if (text == null) {
+    return const Text("");
+  } else {
+    return Text(
+      text,
+      textAlign: TextAlign.center,
+    );
+  }
 }
