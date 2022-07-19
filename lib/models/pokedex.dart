@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 class Pokemon {
@@ -22,7 +20,7 @@ class Pokemon {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['name'] = name;
     data['url'] = url;
     return data;
@@ -44,9 +42,8 @@ class Root {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['results'] =
-        results != null ? results.map((v) => v.toJson()).toList() : null;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['results'] = results.map((v) => v.toJson()).toList();
     return data;
   }
 }
@@ -67,24 +64,24 @@ class ArrType {
 
 class Type {
   String slot = "";
-  Sub_type? sub;
+  SubType? sub;
 
   Type({required this.slot, required this.sub});
 
   Type.fromJson(Map<String, dynamic> json) {
     slot = json['slot'].toString();
     if (json['type'] != null) {
-      sub = Sub_type.fromJson(json['type']);
+      sub = SubType.fromJson(json['type']);
     }
   }
 }
 
-class Sub_type {
+class SubType {
   String? name;
   String? url;
-  Sub_type({required this.name, required this.url});
+  SubType({required this.name, required this.url});
 
-  Sub_type.fromJson(Map<String, dynamic> json) {
+  SubType.fromJson(Map<String, dynamic> json) {
     name = json['name'].toString();
     url = json['url'].toString();
   }
@@ -93,35 +90,35 @@ class Sub_type {
 Color pokemonColor(String? firstT) {
   switch (firstT) {
     case "grass":
-      return Color.fromARGB(255, 63, 194, 85);
+      return const Color.fromARGB(255, 63, 194, 85);
     case "fire":
-      return Color.fromARGB(255, 228, 94, 41);
+      return const Color.fromARGB(255, 228, 94, 41);
     case "water":
-      return Color.fromARGB(255, 66, 132, 207);
+      return const Color.fromARGB(255, 66, 132, 207);
     case "bug":
-      return Color.fromARGB(255, 53, 88, 59);
+      return const Color.fromARGB(255, 53, 88, 59);
     case "normal":
-      return Color.fromARGB(255, 255, 255, 255);
+      return const Color.fromARGB(255, 255, 255, 255);
     case "electric":
-      return Color.fromARGB(255, 191, 218, 74);
+      return const Color.fromARGB(255, 191, 218, 74);
     case "poison":
-      return Color.fromARGB(255, 168, 63, 194);
+      return const Color.fromARGB(255, 168, 63, 194);
     case "ground":
-      return Color.fromARGB(255, 136, 100, 52);
+      return const Color.fromARGB(255, 136, 100, 52);
     case "fairy":
-      return Color.fromARGB(255, 208, 236, 142);
+      return const Color.fromARGB(255, 208, 236, 142);
     case "fighting":
-      return Color.fromARGB(255, 219, 151, 50);
+      return const Color.fromARGB(255, 219, 151, 50);
     case "psychic":
-      return Color.fromARGB(255, 196, 71, 144);
+      return const Color.fromARGB(255, 196, 71, 144);
     case "ghost":
-      return Color.fromARGB(255, 95, 110, 98);
+      return const Color.fromARGB(255, 95, 110, 98);
     case "rock":
-      return Color.fromARGB(255, 168, 170, 169);
+      return const Color.fromARGB(255, 168, 170, 169);
     case "ice":
-      return Color.fromARGB(255, 132, 225, 228);
+      return const Color.fromARGB(255, 132, 225, 228);
     case "dragon":
-      return Color.fromARGB(255, 235, 130, 44);
+      return const Color.fromARGB(255, 235, 130, 44);
     default:
       return Colors.white;
   }

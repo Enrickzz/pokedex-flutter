@@ -1,10 +1,4 @@
-// ignore_for_file: prefer_is_empty
-
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:http/http.dart' as http;
 import 'models/pokedex.dart';
 
 class PokemonDetailed extends StatefulWidget {
@@ -29,7 +23,7 @@ class _PokemonDetailed extends State<PokemonDetailed> {
     return Scaffold(
         body: Column(
       children: [
-        SizedBox(height: 40),
+        const SizedBox(height: 40),
         Center(
           child: Container(
             decoration: BoxDecoration(
@@ -40,20 +34,16 @@ class _PokemonDetailed extends State<PokemonDetailed> {
                   color: Colors.grey.withOpacity(0.5),
                   spreadRadius: 5,
                   blurRadius: 7,
-                  offset: Offset(0, 3), // changes position of shadow
+                  offset: const Offset(0, 3), // changes position of shadow
                 ),
               ],
             ),
             height: 200,
             width: 200,
             child: Column(children: [
-              Container(
-                width: 150,
-                height: 150,
-                child: Image.network(
-                  widget.thisPokemon.img,
-                  fit: BoxFit.fill,
-                ),
+              Image.network(
+                widget.thisPokemon.img,
+                fit: BoxFit.fill,
               ),
               Align(
                   alignment: Alignment.bottomCenter,
@@ -61,7 +51,6 @@ class _PokemonDetailed extends State<PokemonDetailed> {
             ]),
           ),
         ),
-        Container(child: Text(""))
       ],
     ));
   }
