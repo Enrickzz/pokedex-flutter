@@ -18,7 +18,7 @@ class Pokemon {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['name'] = name;
     data['url'] = url;
     return data;
@@ -40,9 +40,8 @@ class Root {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['results'] =
-        results != null ? results.map((v) => v.toJson()).toList() : null;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['results'] = results.map((v) => v.toJson()).toList();
     return data;
   }
 }
@@ -63,24 +62,24 @@ class ArrType {
 
 class Type {
   String slot = "";
-  Sub_type? sub;
+  SubType? sub;
 
   Type({required this.slot, required this.sub});
 
   Type.fromJson(Map<String, dynamic> json) {
     slot = json['slot'].toString();
     if (json['type'] != null) {
-      sub = Sub_type.fromJson(json['type']);
+      sub = SubType.fromJson(json['type']);
     }
   }
 }
 
-class Sub_type {
+class SubType {
   String? name;
   String? url;
-  Sub_type({required this.name, required this.url});
+  SubType({required this.name, required this.url});
 
-  Sub_type.fromJson(Map<String, dynamic> json) {
+  SubType.fromJson(Map<String, dynamic> json) {
     name = json['name'].toString();
     url = json['url'].toString();
   }

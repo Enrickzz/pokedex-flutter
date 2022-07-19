@@ -57,9 +57,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   int offsetTracker = 0;
-  ScrollController _scrollController = new ScrollController();
+  final ScrollController _scrollController = ScrollController();
   @override
   initState() {
     getPokemons(offsetTracker).then((value) {
@@ -134,22 +133,21 @@ class _MyHomePageState extends State<MyHomePage> {
                             color: Colors.grey.withOpacity(0.5),
                             spreadRadius: 5,
                             blurRadius: 7,
-                            offset: Offset(0, 3), // changes position of shadow
+                            offset: const Offset(
+                                0, 3), // changes position of shadow
                           ),
                         ],
                       ),
                       child: Column(children: [
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
-                            style: TextStyle(color: Colors.black),
+                            style: const TextStyle(color: Colors.black),
                             textAlign: TextAlign.left,
-                            name + "\n"),
+                            "$name\n"),
                         Row(
                           children: [
                             Column(children: [
-                              Container(
-                                width: 70,
-                                // ignore: prefer_const_constructors
+                              Center(
                                 child: nullCheck(pokemons[index]
                                     .pokemonType
                                     ?.types[0]
@@ -157,12 +155,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                     .name
                                     .toString()),
                               ),
-                              SizedBox(height: 3),
+                              const SizedBox(height: 3),
                               Visibility(
                                   visible: bool2ndType,
-                                  child: Container(
-                                    width: 70,
-                                    // ignore: prefer_const_constructors
+                                  child: Center(
                                     child: nullCheck(string2ndType),
                                   ))
                             ]),
@@ -202,35 +198,35 @@ class _MyHomePageState extends State<MyHomePage> {
 Color pokemonColor(String? firstT) {
   switch (firstT) {
     case "grass":
-      return Color.fromARGB(255, 63, 194, 85);
+      return const Color.fromARGB(255, 63, 194, 85);
     case "fire":
-      return Color.fromARGB(255, 228, 94, 41);
+      return const Color.fromARGB(255, 228, 94, 41);
     case "water":
-      return Color.fromARGB(255, 66, 132, 207);
+      return const Color.fromARGB(255, 66, 132, 207);
     case "bug":
-      return Color.fromARGB(255, 53, 88, 59);
+      return const Color.fromARGB(255, 53, 88, 59);
     case "normal":
-      return Color.fromARGB(255, 255, 255, 255);
+      return const Color.fromARGB(255, 255, 255, 255);
     case "electric":
-      return Color.fromARGB(255, 191, 218, 74);
+      return const Color.fromARGB(255, 191, 218, 74);
     case "poison":
-      return Color.fromARGB(255, 168, 63, 194);
+      return const Color.fromARGB(255, 168, 63, 194);
     case "ground":
-      return Color.fromARGB(255, 136, 100, 52);
+      return const Color.fromARGB(255, 136, 100, 52);
     case "fairy":
-      return Color.fromARGB(255, 208, 236, 142);
+      return const Color.fromARGB(255, 208, 236, 142);
     case "fighting":
-      return Color.fromARGB(255, 219, 151, 50);
+      return const Color.fromARGB(255, 219, 151, 50);
     case "psychic":
-      return Color.fromARGB(255, 196, 71, 144);
+      return const Color.fromARGB(255, 196, 71, 144);
     case "ghost":
-      return Color.fromARGB(255, 95, 110, 98);
+      return const Color.fromARGB(255, 95, 110, 98);
     case "rock":
-      return Color.fromARGB(255, 168, 170, 169);
+      return const Color.fromARGB(255, 168, 170, 169);
     case "ice":
-      return Color.fromARGB(255, 132, 225, 228);
+      return const Color.fromARGB(255, 132, 225, 228);
     case "dragon":
-      return Color.fromARGB(255, 235, 130, 44);
+      return const Color.fromARGB(255, 235, 130, 44);
     default:
       return Colors.white;
   }
@@ -238,12 +234,11 @@ Color pokemonColor(String? firstT) {
 
 Future<List<Pokemon>> getPokemons(int offset) async {
   List<Pokemon> fullList = [];
-  Root test = new Root(results: fullList);
-  final response = await http
+  Root test = Root(results: fullList);
+  await http
       .get(Uri.parse(
           'https://pokeapi.co/api/v2/pokemon/?limit=20&offset=$offset'))
       .then((value) async {
-    // print(value.body);
     test = Root.fromJson(jsonDecode(value.body));
     for (var i = 0; i < test.results.length; i++) {
       int query = i + offset + 1;
@@ -251,7 +246,7 @@ Future<List<Pokemon>> getPokemons(int offset) async {
       pokemons[i + offset].id = query.toString(); //for onClick queries
       pokemons[i + offset].img =
           "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$query.png";
-      var typeResponse = http
+      http
           .get(Uri.parse("https://pokeapi.co/api/v2/pokemon/$query"))
           .then((value) {
         pokemons[i + offset].pokemonType =

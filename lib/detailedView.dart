@@ -29,7 +29,7 @@ class _PokemonDetailed extends State<PokemonDetailed> {
     return Scaffold(
         body: Column(
       children: [
-        SizedBox(height: 40),
+        const SizedBox(height: 40),
         Center(
           child: Container(
             decoration: BoxDecoration(
@@ -40,7 +40,7 @@ class _PokemonDetailed extends State<PokemonDetailed> {
                   color: Colors.grey.withOpacity(0.5),
                   spreadRadius: 5,
                   blurRadius: 7,
-                  offset: Offset(0, 3), // changes position of shadow
+                  offset: const Offset(0, 3), // changes position of shadow
                 ),
               ],
             ),
@@ -61,7 +61,7 @@ class _PokemonDetailed extends State<PokemonDetailed> {
             ]),
           ),
         ),
-        Container(child: Text(""))
+        const Center(child: Text(""))
       ],
     ));
   }
